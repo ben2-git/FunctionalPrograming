@@ -1,0 +1,122 @@
+(define empty?
+  (lambda (lst)
+    (eq? lst '())
+  )
+)
+
+(define append 
+  (lambda (lst1 lst2)
+      (if 
+          (empty? lst1)
+            lst2
+            (
+              cons (car lst1) (append (cdr lst1) lst2)
+            )
+          
+      )
+  )
+)
+
+(define length
+  (lambda (lst)
+     (if 
+        (empty? lst)
+        0
+        (+ 1 (length (cdr lst)))
+     )
+  )
+)
+
+(define reverse 
+  (lambda (lst)
+        (if 
+            (empty? lst)
+            lst
+            (
+              append (reverse (cdr lst)) (cons (car lst) '())
+            )
+        )
+  )
+)
+
+(define make-cyclic
+  (lambda (lst dup-count)
+      (if 
+        (> (length lst) (length dup-count))
+        (make-cyclic lst (append dup-count dup-count))
+        dup-count
+      )
+  )
+
+)
+
+(define duplicate-items
+   (lambda(lst dup-count)
+      (duplicate-items-aux lst (make-cyclic lst dup-count))
+   )
+)
+
+(define mutiply-item
+  (lambda (num dupn)
+    (if (= 0 dupn)
+      '()
+      (cons num (mutiply-item num (- dupn 1)))
+    )
+  )
+)
+
+(define duplicate-items-aux
+  (lambda (lst dup-count)
+    (if 
+      (empty? lst)
+      '()
+      (append 
+        (mutiply-item (car lst) (car dup-count))
+        (duplicate-items-aux (cdr lst) (cdr dup-count))
+      )
+    )
+  )
+)
+
+(define remove-dup
+  (lambda (lst n)
+    (if
+    (empty? lst)
+    lst
+    (if
+      (= (car lst) n)
+      (remove-dup (cdr lst) n)
+      (cons (car lst) (remove-dup (cdr lst) n))
+    )
+    )
+  )
+)
+
+(define payment
+  (lambda (n coins-lst)
+        (if
+            (empty? coins-lst)
+            (if
+              (= n 0)
+              1
+              0
+            )
+            (+
+              (payment (- n (car coins-lst)) (cdr coins-lst))
+              (payment n (remove-dup (cdr coins-lst) (car coins-lst)))
+            )
+        )
+  )
+)
+                               
+(define compose-n
+  (lambda( f n)
+        (if
+          (= n 1)
+          f
+          (lambda (x)
+            (f ((compose-n f (- n 1)) x))
+          )
+        )
+  )
+)
